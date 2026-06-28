@@ -408,6 +408,13 @@ function setBarWidth(id, pct) {
 // ─── BLE Connection ───
 async function connectDevice() {
   if (state.connecting) return;
+  
+  if (!navigator.bluetooth) {
+    log('Error: Web Bluetooth not supported in this browser. On iOS, please use the Bluefy or WebBLE app.');
+    alert('Web Bluetooth is not supported in this browser.\n\nIf you are on an iPhone, standard Safari does not support Bluetooth. Please download a free app like "Bluefy" or "WebBLE" from the App Store and open this page there.');
+    return;
+  }
+
   state.connecting = true;
   render();
   log('Requesting Colmi Ring R10…');
@@ -440,11 +447,16 @@ async function connectDevice() {
     state.connected = true;
     state.connecting = false;
     state.simulator = false;
+    
+    // Clear simulator data before syncing real data
+    state.activity.steps = 0; state.activity.calories = 0; state.activity.distance = 0;
+    state.activity.hourly = []; state.hr.timeline = []; state.oxygen.timeline = [];
     render();
 
     await writeUart(colmi.CMD_BATTERY);
     await syncTime();
-    log('Ready ✓');
+    log('Ready ✓ Auto-syncing data...');
+    setTimeout(syncTelemetry, 1500); // Automatically fetch data upon connection
   } catch (e) {
     log(`Connection failed: ${e.message}`);
     state.connecting = false;
