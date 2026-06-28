@@ -24,28 +24,20 @@ export function render(container) {
         <div class="hero-badge" style="background:${statusColor(sStatus)}22;color:${statusColor(sStatus)}">${statusLabel(sStatus)}</div>
       </div>
 
-      <!-- Score Ring -->
-      <div class="score-hero clickable-card" id="act-score-card">
-        <div class="score-ring-wrap">
-          <svg class="score-svg" viewBox="0 0 160 160">
-            <defs>
-              <linearGradient id="grad-act" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#34d399"/><stop offset="100%" stop-color="#059669"/>
-              </linearGradient>
-            </defs>
-            <circle cx="80" cy="80" r="68" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="10"/>
-            <circle cx="80" cy="80" r="68" fill="none"
-              stroke="url(#grad-act)" stroke-width="10"
-              stroke-linecap="round" stroke-dasharray="427"
-              stroke-dashoffset="${427 - 427 * score / 100}"
-              transform="rotate(-90 80 80)" class="arc-animate"/>
+      <!-- Score Crown -->
+      <div class="card" style="padding: 32px 24px; display: flex; flex-direction: column; align-items: center; gap: 16px;" id="act-score-card">
+        <div style="position: relative; width: 100%; max-width: 280px; height: 180px; display: flex; justify-content: center;">
+          <svg viewBox="0 0 200 140" style="width: 100%; height: 100%; overflow: visible;">
+            <path d="M 30,140 A 80,80 0 1,1 170,140" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="14" stroke-linecap="round"/>
+            <path d="M 30,140 A 80,80 0 1,1 170,140" fill="none" stroke="${PALETTE.activity}" stroke-width="14" stroke-linecap="round"
+              stroke-dasharray="350" stroke-dashoffset="${350 - (350 * score / 100)}" class="arc-animate"/>
           </svg>
-          <div class="score-center">
-            <span class="score-number">${score}</span>
-            <span class="score-word">${t.steps.toLocaleString()} steps</span>
+          <div style="position: absolute; inset: 0; bottom: 20px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end;">
+            <span style="font-size: 64px; font-weight: 700; line-height: 1; letter-spacing: -2px;">${score}</span>
+            <span style="font-size: 16px; font-weight: 600; color: ${PALETTE.activity}; margin-top: 4px;">Activity</span>
           </div>
         </div>
-        <p class="score-summary">${pct >= 100 ? '🎉 Daily goal crushed! Outstanding movement today.' : pct >= 70 ? `💪 ${remaining.toLocaleString()} steps to your goal — almost there!` : `🚶 ${remaining.toLocaleString()} steps remaining. A ${Math.round(remaining/100)}-minute walk will do it.`}</p>
+        <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.5; text-align: center; max-width: 300px;">${pct >= 100 ? '🎉 Daily goal crushed! Outstanding movement today.' : pct >= 70 ? `💪 ${remaining.toLocaleString()} steps to your goal — almost there!` : `🚶 ${remaining.toLocaleString()} steps remaining. A ${Math.round(remaining/100)}-minute walk will do it.`}</p>
       </div>
 
       <!-- Step Goal Progress -->

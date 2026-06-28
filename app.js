@@ -1,11 +1,11 @@
 // ─── AetherRing v2.0 — Boot + BLE Core ───────────────────────────────────────
 import * as colmi from './colmiProtocol.js';
 import { raw, derived, seedSimulator, minsToHM } from './modules/store.js';
-import { buildCharts as homeCharts, initEvents as homeEvents, render as homeRender } from './modules/screens/home.js';
+import { buildCharts as todayCharts, initEvents as todayEvents, render as todayRender } from './modules/screens/today.js';
 import { buildCharts as sleepCharts, initEvents as sleepEvents, render as sleepRender } from './modules/screens/sleep.js';
-import { buildCharts as recCharts, initEvents as recEvents, render as recRender } from './modules/screens/recovery.js';
+import { buildCharts as readinessCharts, initEvents as readinessEvents, render as readinessRender } from './modules/screens/readiness.js';
 import { buildCharts as actCharts, initEvents as actEvents, render as actRender } from './modules/screens/activity.js';
-import { buildCharts as bodyCharts, initEvents as bodyEvents, render as bodyRender } from './modules/screens/body.js';
+import { buildCharts as resCharts, initEvents as resEvents, render as resRender } from './modules/screens/resilience.js';
 import { buildCharts as coachCharts, initEvents as coachEvents, render as coachRender } from './modules/screens/coach.js';
 import { destroyAll } from './modules/charts.js';
 
@@ -17,14 +17,14 @@ let stepsAcc = [], hrAcc = { size: 0, range: 5, rates: [], idx: 0 };
 let dataBuffer = [];
 
 // ─── Tab Navigation ───────────────────────────────────────────────────────────
-let currentTab = 'home';
+let currentTab = 'today';
 const TAB_RENDERERS = {
-  home:     { render: homeRender,  events: homeEvents,  charts: homeCharts },
-  sleep:    { render: sleepRender, events: sleepEvents, charts: sleepCharts },
-  recovery: { render: recRender,   events: recEvents,   charts: recCharts },
-  activity: { render: actRender,   events: actEvents,   charts: actCharts },
-  body:     { render: bodyRender,  events: bodyEvents,  charts: bodyCharts },
-  coach:    { render: coachRender, events: coachEvents, charts: coachCharts },
+  today:      { render: todayRender,   events: todayEvents,   charts: todayCharts },
+  sleep:      { render: sleepRender,   events: sleepEvents,   charts: sleepCharts },
+  readiness:  { render: readinessRender, events: readinessEvents, charts: readinessCharts },
+  activity:   { render: actRender,     events: actEvents,     charts: actCharts },
+  resilience: { render: resRender,     events: resEvents,     charts: resCharts },
+  coach:      { render: coachRender,   events: coachEvents,   charts: coachCharts },
 };
 
 function switchTab(tabId) {
@@ -444,6 +444,8 @@ window.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', () => switchTab(tab.dataset.tab));
   });
+
+  document.getElementById('btn-coach')?.addEventListener('click', () => switchTab('coach'));
 
   // Theme toggle
   document.getElementById('btn-theme')?.addEventListener('click', () => {

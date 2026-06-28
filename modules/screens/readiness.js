@@ -25,29 +25,20 @@ export function render(container) {
         <div class="hero-badge" style="background:${statusColor(rStatus)}22;color:${statusColor(rStatus)}">${statusLabel(rStatus)}</div>
       </div>
 
-      <!-- Readiness Score -->
-      <div class="score-hero clickable-card" id="rec-score-card">
-        <div class="score-ring-wrap">
-          <svg class="score-svg" viewBox="0 0 160 160">
-            <defs>
-              <linearGradient id="grad-rec" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#2dd4bf"/>
-                <stop offset="100%" stop-color="#0891b2"/>
-              </linearGradient>
-            </defs>
-            <circle cx="80" cy="80" r="68" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="10"/>
-            <circle cx="80" cy="80" r="68" fill="none"
-              stroke="url(#grad-rec)" stroke-width="10"
-              stroke-linecap="round" stroke-dasharray="427"
-              stroke-dashoffset="${427 - 427 * r / 100}"
-              transform="rotate(-90 80 80)" class="arc-animate"/>
+      <!-- Score Crown -->
+      <div class="card" style="padding: 32px 24px; display: flex; flex-direction: column; align-items: center; gap: 16px;" id="rec-score-card">
+        <div style="position: relative; width: 100%; max-width: 280px; height: 180px; display: flex; justify-content: center;">
+          <svg viewBox="0 0 200 140" style="width: 100%; height: 100%; overflow: visible;">
+            <path d="M 30,140 A 80,80 0 1,1 170,140" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="14" stroke-linecap="round"/>
+            <path d="M 30,140 A 80,80 0 1,1 170,140" fill="none" stroke="${PALETTE.readiness}" stroke-width="14" stroke-linecap="round"
+              stroke-dasharray="350" stroke-dashoffset="${350 - (350 * r / 100)}" class="arc-animate"/>
           </svg>
-          <div class="score-center">
-            <span class="score-number">${r}</span>
-            <span class="score-word">Readiness</span>
+          <div style="position: absolute; inset: 0; bottom: 20px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end;">
+            <span style="font-size: 64px; font-weight: 700; line-height: 1; letter-spacing: -2px;">${r}</span>
+            <span style="font-size: 16px; font-weight: 600; color: ${PALETTE.readiness}; margin-top: 4px;">Readiness</span>
           </div>
         </div>
-        <p class="score-summary">${getReadinessInsight()}</p>
+        <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.5; text-align: center; max-width: 300px;">${getReadinessInsight()}</p>
       </div>
 
       <!-- Recovery Contributors -->
