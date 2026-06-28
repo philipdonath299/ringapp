@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>AetherRing — Colmi R10</title>
+  <meta name="description" content="Premium Colmi Ring R10 health dashboard with sleep, activity and heart rate tracking." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="device-shell">
+  <div class="device-notch">
+    <div class="notch-pill"></div>
+  </div>
+
+  <!-- ── STATUS BAR ── -->
+  <div class="status-bar">
+    <span id="clock" class="status-time">12:45</span>
+    <div class="status-right">
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none" id="signal-icon">
+        <rect x="0" y="6" width="3" height="6" rx="1" fill="currentColor" opacity="0.4"/>
+        <rect x="4.5" y="4" width="3" height="8" rx="1" fill="currentColor" opacity="0.6"/>
+        <rect x="9" y="2" width="3" height="10" rx="1" fill="currentColor" opacity="0.8"/>
+        <rect x="13.5" y="0" width="3" height="12" rx="1" fill="currentColor"/>
+      </svg>
+      <span id="batt-pct" class="status-batt">85%</span>
+      <span id="batt-charging" style="display:none;">⚡</span>
+    </div>
+  </div>
+
+  <!-- ── SCREENS ── -->
+  <div class="screens-host">
+
+    <!-- ══ HOME / READINESS ══ -->
+    <div id="screen-home" class="screen active">
+      <div class="screen-scroll">
+
+        <!-- Greeting -->
+        <div class="page-hero">
+          <div class="hero-text">
+            <p class="hero-eyebrow">Good morning</p>
+            <h1 class="hero-title">Today</h1>
+          </div>
+          <button id="btn-connect" class="ring-btn" title="Connect Ring">
+            <span class="ring-icon">💍</span>
+          </button>
+        </div>
+
+        <!-- Readiness Score Ring -->
+        <div class="score-hero">
+          <div class="score-ring-wrap">
+            <svg class="score-svg" viewBox="0 0 160 160">
+              <defs>
+                <linearGradient id="grad-readiness" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#2dd4bf"/>
+                  <stop offset="100%" stop-color="#0891b2"/>
+                </linearGradient>
+              </defs>
+              <!-- Track -->
+              <circle cx="80" cy="80" r="68" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="10"/>
+              <!-- Progress -->
+              <circle id="readiness-arc" cx="80" cy="80" r="68" fill="none"
+                stroke="url(#grad-readiness)" stroke-width="10"
+                stroke-linecap="round" stroke-dasharray="427" stroke-dashoffset="60"
+                transform="rotate(-90 80 80)"
+                class="arc-animate"/>
+            </svg>
+            <div class="score-center">
+              <span class="score-number" id="readiness-score">85</span>
+              <span class="score-word" id="readiness-label">Optimal</span>
+            </div>
+          </div>
+          <p class="score-summary" id="readiness-summary">
+            Your resting HR and HRV indicate full recovery. Great conditions for training.
+          </p>
+        </div>
+
+        <!-- Three pillars row -->
+        <div class="pillars-row">
+          <div class="pillar pillar--sleep" id="nav-to-sleep">
+            <div class="pillar-icon">🌙</div>
+            <span class="pillar-val" id="p-sleep-score">84</span>
+            <span class="pillar-lbl">Sleep</span>
+            <div class="pillar-bar"><div class="pillar-fill" style="width:84%; background: var(--clr-sleep);"></div></div>
+          </div>
+          <div class="pillar pillar--activity" id="nav-to-activity">
+            <div class="pillar-icon">⚡</div>
+            <span class="pillar-val" id="p-activity-score">64</span>
+            <span class="pillar-lbl">Activity</span>
+            <div class="pillar-bar"><div class="pillar-fill" style="width:64%; background: var(--clr-activity);"></div></div>
+          </div>
+          <div class="pillar pillar--hr">
+            <div class="pillar-icon">❤️</div>
+            <span class="pillar-val" id="p-hr">72</span>
+            <span class="pillar-lbl">Resting HR</span>
+            <div class="pillar-bar"><div class="pillar-fill" style="width:60%; background: var(--clr-hr);"></div></div>
+          </div>
+        </div>
+
+        <!-- Live Pulse card -->
+        <div class="section-label">REAL-TIME</div>
+        <div class="card pulse-card">
+          <div class="pulse-header">
+            <div>
+              <p class="card-label">Heart Rate</p>
+              <div class="pulse-display">
+                <span class="pulse-value" id="live-value">--</span>
+                <span class="pulse-unit" id="live-unit">bpm</span>
+              </div>
+              <p class="pulse-subtitle" id="live-label">Tap a button to start</p>
+            </div>
+            <div id="pulse-wave-wrap" class="pulse-wave-wrap">
+              <svg id="pulse-wave-svg" class="pulse-wave-svg" viewBox="0 0 120 40" preserveAspectRatio="none">
+                <path id="pulse-path"
+                  d="M0,20 L10,20 L14,6 L18,34 L22,6 L26,20 L36,20 L40,12 L44,28 L48,12 L52,20 L62,20 L66,8 L70,32 L74,8 L78,20 L88,20 L92,14 L96,26 L100,14 L104,20 L120,20"
+                  fill="none" stroke="#f43f5e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+          <div class="pulse-btns">
+            <button id="btn-live-measure" class="pill-btn pill-btn--hr">Live HR</button>
+            <button id="btn-live-oxy" class="pill-btn pill-btn--oxy">Live SpO₂</button>
+          </div>
+        </div>
+
+        <!-- Today stats row -->
+        <div class="section-label">TODAY'S METRICS</div>
+        <div class="stats-grid">
+          <div class="stat-chip stat-chip--steps">
+            <span class="chip-icon">🚶</span>
+            <span class="chip-val" id="chip-steps">6,420</span>
+            <span class="chip-lbl">Steps</span>
+          </div>
+          <div class="stat-chip stat-chip--cal">
+            <span class="chip-icon">🔥</span>
+            <span class="chip-val" id="chip-cal">240</span>
+            <span class="chip-lbl">kcal</span>
+          </div>
+          <div class="stat-chip stat-chip--dist">
+            <span class="chip-icon">📍</span>
+            <span class="chip-val" id="chip-dist">4.8</span>
+            <span class="chip-lbl">km</span>
+          </div>
+          <div class="stat-chip stat-chip--oxy">
+            <span class="chip-icon">💧</span>
+            <span class="chip-val" id="chip-oxy">98%</span>
+            <span class="chip-lbl">SpO₂</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ SLEEP ══ -->
+    <div id="screen-sleep" class="screen">
+      <div class="screen-scroll">
+
+        <div class="page-hero">
+          <div class="hero-text">
+            <p class="hero-eyebrow">LAST NIGHT</p>
+            <h1 class="hero-title">Sleep</h1>
+          </div>
+        </div>
+
+        <!-- Sleep Score Ring -->
+        <div class="score-hero">
+          <div class="score-ring-wrap">
+            <svg class="score-svg" viewBox="0 0 160 160">
+              <defs>
+                <linearGradient id="grad-sleep" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#c084fc"/>
+                  <stop offset="100%" stop-color="#818cf8"/>
+                </linearGradient>
+              </defs>
+              <circle cx="80" cy="80" r="68" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="10"/>
+              <circle id="sleep-arc" cx="80" cy="80" r="68" fill="none"
+                stroke="url(#grad-sleep)" stroke-width="10"
+                stroke-linecap="round" stroke-dasharray="427" stroke-dashoffset="70"
+                transform="rotate(-90 80 80)"
+                class="arc-animate"/>
+            </svg>
+            <div class="score-center">
+              <span class="score-number" id="sleep-score-num">84</span>
+              <span class="score-word" id="sleep-duration-lbl">7h 45m</span>
+            </div>
+          </div>
+          <p class="score-summary">Good sleep with solid deep and REM phases. Your recovery was excellent.</p>
+        </div>
+
+        <!-- Sleep Stage bars (horizontal) -->
+        <div class="section-label">SLEEP STAGES</div>
+        <div class="card">
+          <div class="sleep-stages">
+            <div class="stage-row">
+              <span class="stage-dot" style="background:#6366f1;"></span>
+              <span class="stage-name">Deep</span>
+              <div class="stage-bar-track"><div class="stage-bar-fill" id="bar-deep" style="background:#6366f1;width:40%;"></div></div>
+              <span class="stage-dur" id="dur-deep">1h 50m</span>
+            </div>
+            <div class="stage-row">
+              <span class="stage-dot" style="background:#93c5fd;"></span>
+              <span class="stage-name">Light</span>
+              <div class="stage-bar-track"><div class="stage-bar-fill" id="bar-light" style="background:#93c5fd;width:60%;"></div></div>
+              <span class="stage-dur" id="dur-light">4h 20m</span>
+            </div>
+            <div class="stage-row">
+              <span class="stage-dot" style="background:#c084fc;"></span>
+              <span class="stage-name">REM</span>
+              <div class="stage-bar-track"><div class="stage-bar-fill" id="bar-rem" style="background:#c084fc;width:28%;"></div></div>
+              <span class="stage-dur" id="dur-rem">1h 15m</span>
+            </div>
+            <div class="stage-row">
+              <span class="stage-dot" style="background:#fbbf24;"></span>
+              <span class="stage-name">Awake</span>
+              <div class="stage-bar-track"><div class="stage-bar-fill" id="bar-awake" style="background:#fbbf24;width:8%;"></div></div>
+              <span class="stage-dur" id="dur-awake">20m</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- SpO2 during sleep -->
+        <div class="section-label">BLOOD OXYGEN DURING SLEEP</div>
+        <div class="card">
+          <div class="card-meta-row">
+            <span class="card-label">SpO₂ Levels</span>
+            <span class="card-value-badge" id="badge-oxy-avg">98% avg</span>
+          </div>
+          <div class="chart-wrap" style="height:160px;">
+            <canvas id="chart-oxygen"></canvas>
+          </div>
+        </div>
+
+        <!-- Heart Rate during sleep -->
+        <div class="section-label">HEART RATE DURING SLEEP</div>
+        <div class="card">
+          <div class="card-meta-row">
+            <span class="card-label">HR Variability</span>
+            <div class="card-hr-stats">
+              <span class="hr-stat"><span class="hr-dot" style="background:#f43f5e;"></span><span id="sleep-hr-min">58</span> min</span>
+              <span class="hr-stat"><span class="hr-dot" style="background:#fb923c;"></span><span id="sleep-hr-max">82</span> max</span>
+            </div>
+          </div>
+          <div class="chart-wrap" style="height:160px;">
+            <canvas id="chart-hr-sleep"></canvas>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ ACTIVITY ══ -->
+    <div id="screen-activity" class="screen">
+      <div class="screen-scroll">
+
+        <div class="page-hero">
+          <div class="hero-text">
+            <p class="hero-eyebrow">TODAY</p>
+            <h1 class="hero-title">Activity</h1>
+          </div>
+        </div>
+
+        <!-- Activity Score Ring -->
+        <div class="score-hero">
+          <div class="score-ring-wrap">
+            <svg class="score-svg" viewBox="0 0 160 160">
+              <defs>
+                <linearGradient id="grad-activity" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#34d399"/>
+                  <stop offset="100%" stop-color="#059669"/>
+                </linearGradient>
+              </defs>
+              <circle cx="80" cy="80" r="68" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="10"/>
+              <circle id="activity-arc" cx="80" cy="80" r="68" fill="none"
+                stroke="url(#grad-activity)" stroke-width="10"
+                stroke-linecap="round" stroke-dasharray="427" stroke-dashoffset="154"
+                transform="rotate(-90 80 80)"
+                class="arc-animate"/>
+            </svg>
+            <div class="score-center">
+              <span class="score-number" id="activity-score-num">64</span>
+              <span class="score-word" id="activity-steps-lbl">6,420 steps</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Steps Goal Progress -->
+        <div class="section-label">STEP GOAL</div>
+        <div class="card">
+          <div class="card-meta-row">
+            <span class="card-label">Daily Steps</span>
+            <span class="card-value-badge" id="badge-steps-goal">6,420 / 10,000</span>
+          </div>
+          <div class="goal-progress-track">
+            <div class="goal-progress-fill" id="goal-fill" style="width:64.2%;"></div>
+          </div>
+          <div class="goal-sub-row">
+            <span id="goal-dist">4.8 km walked</span>
+            <span id="goal-cal">240 kcal</span>
+          </div>
+        </div>
+
+        <!-- Hourly Steps chart -->
+        <div class="section-label">HOURLY ACTIVITY</div>
+        <div class="card">
+          <div class="chart-wrap" style="height:160px;">
+            <canvas id="chart-steps"></canvas>
+          </div>
+        </div>
+
+        <!-- Heart Rate history -->
+        <div class="section-label">HEART RATE HISTORY</div>
+        <div class="card">
+          <div class="card-meta-row">
+            <span class="card-label">5-min intervals</span>
+            <div class="card-hr-stats">
+              <span class="hr-stat"><span class="hr-dot" style="background:#f43f5e;"></span><span id="hr-min">58</span></span>
+              <span class="hr-stat">avg <span id="hr-avg">71</span></span>
+              <span class="hr-stat"><span class="hr-dot" style="background:#fb923c;"></span><span id="hr-max">124</span></span>
+            </div>
+          </div>
+          <div class="chart-wrap" style="height:160px;">
+            <canvas id="chart-hr"></canvas>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ SETTINGS / DEVICE ══ -->
+    <div id="screen-settings" class="screen">
+      <div class="screen-scroll">
+
+        <div class="page-hero">
+          <div class="hero-text">
+            <p class="hero-eyebrow">RING MANAGEMENT</p>
+            <h1 class="hero-title">Device</h1>
+          </div>
+        </div>
+
+        <!-- Connection status card -->
+        <div class="card conn-card">
+          <div class="conn-info">
+            <div class="conn-ring-dot" id="conn-dot"></div>
+            <div>
+              <p class="conn-name" id="info-name">Colmi Ring R10</p>
+              <p class="conn-status-text" id="conn-status-text">Simulator Mode</p>
+            </div>
+          </div>
+          <button id="btn-connect-settings" class="pill-btn pill-btn--connect">Connect</button>
+        </div>
+
+        <!-- Device info -->
+        <div class="section-label">DEVICE INFO</div>
+        <div class="card">
+          <div class="info-list">
+            <div class="info-row">
+              <span class="info-key">Model</span>
+              <span class="info-val" id="info-model">Colmi R10</span>
+            </div>
+            <div class="info-row">
+              <span class="info-key">Firmware</span>
+              <span class="info-val" id="info-fw">v1.2.4</span>
+            </div>
+            <div class="info-row">
+              <span class="info-key">Interface</span>
+              <span class="info-val" id="info-mode">Virtual / Simulator</span>
+            </div>
+            <div class="info-row">
+              <span class="info-key">Battery</span>
+              <span class="info-val"><span id="info-batt">85%</span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="section-label">RING CONTROLS</div>
+        <div class="controls-list">
+          <button id="btn-sync-telemetry" class="control-btn">
+            <span class="ctrl-icon">🔄</span>
+            <span class="ctrl-label">Sync Telemetry</span>
+            <svg class="ctrl-arrow" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+          </button>
+          <button id="btn-sync-time" class="control-btn">
+            <span class="ctrl-icon">⏱</span>
+            <span class="ctrl-label">Sync Time</span>
+            <svg class="ctrl-arrow" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+          </button>
+          <button id="btn-blink-led" class="control-btn">
+            <span class="ctrl-icon">💡</span>
+            <span class="ctrl-label">Blink LED</span>
+            <svg class="ctrl-arrow" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+          </button>
+          <button id="btn-reboot" class="control-btn control-btn--danger">
+            <span class="ctrl-icon">🔃</span>
+            <span class="ctrl-label">Reboot Ring</span>
+            <svg class="ctrl-arrow" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+          </button>
+        </div>
+
+        <!-- BLE Console -->
+        <div class="section-label">BLE PACKET LOG</div>
+        <div class="card console-card">
+          <div id="ble-console-logs" class="console-box"></div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /screens-host -->
+
+  <!-- ── TAB BAR ── -->
+  <nav class="tab-bar">
+    <button class="tab active" data-screen="screen-home" id="tab-home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      <span>Home</span>
+    </button>
+    <button class="tab" data-screen="screen-sleep" id="tab-sleep">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+      <span>Sleep</span>
+    </button>
+    <button class="tab" data-screen="screen-activity" id="tab-activity">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+      <span>Activity</span>
+    </button>
+    <button class="tab" data-screen="screen-settings" id="tab-settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9z"/>
+      </svg>
+      <span>Device</span>
+    </button>
+  </nav>
+
+  <div class="home-indicator"></div>
+</div><!-- /device-shell -->
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
