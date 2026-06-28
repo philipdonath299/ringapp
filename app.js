@@ -458,5 +458,20 @@ window.addEventListener('DOMContentLoaded', () => {
   // Initial render
   renderCurrentTab();
 
+  // Handle backgrounding to prevent GATT lock (ring gets stuck thinking it's connected)
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') {
+      if (raw.connected && bleDevice?.gatt?.connected) {
+        log('App hidden. Disconnecting to free GATT...');
+        bleDevice.gatt.disconnect();
+      }
+    }
+  });
+  window.addEventListener('pagehide', () => {
+    if (raw.connected && bleDevice?.gatt?.connected) {
+      bleDevice.gatt.disconnect();
+    }
+  });
+
   log('AetherRing v2.0 ready — Simulator active. Connect your R10 via the 💍 button.');
 });
