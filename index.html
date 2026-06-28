@@ -80,25 +80,36 @@
           </p>
         </div>
 
-        <!-- Three pillars row -->
-        <div class="pillars-row">
-          <div class="pillar pillar--sleep" id="nav-to-sleep">
-            <div class="pillar-icon">🌙</div>
-            <span class="pillar-val" id="p-sleep-score">84</span>
-            <span class="pillar-lbl">Sleep</span>
-            <div class="pillar-bar"><div class="pillar-fill" style="width:84%; background: var(--clr-sleep);"></div></div>
+        <!-- Readiness Contributors -->
+        <div class="section-label">READINESS CONTRIBUTORS</div>
+        <div class="card metrics-list">
+          <div class="metric-row">
+            <div class="metric-info">
+              <span class="metric-name">Resting Heart Rate</span>
+              <span class="metric-val" id="val-r-hr">58 bpm</span>
+            </div>
+            <div class="metric-bar-bg"><div class="metric-bar-fill" id="bar-r-hr" style="width:90%; background:var(--clr-hr);"></div></div>
           </div>
-          <div class="pillar pillar--activity" id="nav-to-activity">
-            <div class="pillar-icon">⚡</div>
-            <span class="pillar-val" id="p-activity-score">64</span>
-            <span class="pillar-lbl">Activity</span>
-            <div class="pillar-bar"><div class="pillar-fill" style="width:64%; background: var(--clr-activity);"></div></div>
+          <div class="metric-row">
+            <div class="metric-info">
+              <span class="metric-name">HRV Balance</span>
+              <span class="metric-val" id="val-r-hrv">45 ms</span>
+            </div>
+            <div class="metric-bar-bg"><div class="metric-bar-fill" id="bar-r-hrv" style="width:100%; background:var(--clr-readiness);"></div></div>
           </div>
-          <div class="pillar pillar--hr">
-            <div class="pillar-icon">❤️</div>
-            <span class="pillar-val" id="p-hr">72</span>
-            <span class="pillar-lbl">Resting HR</span>
-            <div class="pillar-bar"><div class="pillar-fill" style="width:60%; background: var(--clr-hr);"></div></div>
+          <div class="metric-row">
+            <div class="metric-info">
+              <span class="metric-name">Sleep Balance</span>
+              <span class="metric-val" id="val-r-sleep">80</span>
+            </div>
+            <div class="metric-bar-bg"><div class="metric-bar-fill" id="bar-r-sleep" style="width:80%; background:var(--clr-sleep);"></div></div>
+          </div>
+          <div class="metric-row">
+            <div class="metric-info">
+              <span class="metric-name">Recovery Index</span>
+              <span class="metric-val" id="val-r-rec">85</span>
+            </div>
+            <div class="metric-bar-bg"><div class="metric-bar-fill" id="bar-r-rec" style="width:85%; background:var(--clr-readiness);"></div></div>
           </div>
         </div>
 
@@ -192,34 +203,33 @@
           <p class="score-summary">Good sleep with solid deep and REM phases. Your recovery was excellent.</p>
         </div>
 
-        <!-- Sleep Stage bars (horizontal) -->
-        <div class="section-label">SLEEP STAGES</div>
-        <div class="card">
-          <div class="sleep-stages">
-            <div class="stage-row">
-              <span class="stage-dot" style="background:#6366f1;"></span>
-              <span class="stage-name">Deep</span>
-              <div class="stage-bar-track"><div class="stage-bar-fill" id="bar-deep" style="background:#6366f1;width:40%;"></div></div>
-              <span class="stage-dur" id="dur-deep">1h 50m</span>
-            </div>
-            <div class="stage-row">
-              <span class="stage-dot" style="background:#93c5fd;"></span>
-              <span class="stage-name">Light</span>
-              <div class="stage-bar-track"><div class="stage-bar-fill" id="bar-light" style="background:#93c5fd;width:60%;"></div></div>
-              <span class="stage-dur" id="dur-light">4h 20m</span>
-            </div>
-            <div class="stage-row">
-              <span class="stage-dot" style="background:#c084fc;"></span>
-              <span class="stage-name">REM</span>
-              <div class="stage-bar-track"><div class="stage-bar-fill" id="bar-rem" style="background:#c084fc;width:28%;"></div></div>
-              <span class="stage-dur" id="dur-rem">1h 15m</span>
-            </div>
-            <div class="stage-row">
-              <span class="stage-dot" style="background:#fbbf24;"></span>
-              <span class="stage-name">Awake</span>
-              <div class="stage-bar-track"><div class="stage-bar-fill" id="bar-awake" style="background:#fbbf24;width:8%;"></div></div>
-              <span class="stage-dur" id="dur-awake">20m</span>
-            </div>
+        <!-- Sleep Details and Contributors -->
+        <div class="section-label">SLEEP DETAILS</div>
+        <div class="card detail-grid">
+          <div class="grid-item"><span class="g-lbl">Time in bed</span><span class="g-val" id="sleep-time-bed">8h 0m</span></div>
+          <div class="grid-item"><span class="g-lbl">Time asleep</span><span class="g-val" id="sleep-time-asleep">7h 25m</span></div>
+          <div class="grid-item"><span class="g-lbl">Efficiency</span><span class="g-val" id="sleep-efficiency">93%</span></div>
+          <div class="grid-item"><span class="g-lbl">Latency</span><span class="g-val" id="sleep-latency">15m</span></div>
+          <div class="grid-item"><span class="g-lbl">Restfulness</span><span class="g-val" id="sleep-restfulness">85/100</span></div>
+        </div>
+
+        <div class="section-label">SLEEP CONTRIBUTORS</div>
+        <div class="card metrics-list">
+          <div class="metric-row">
+            <div class="metric-info"><span class="metric-name">Efficiency</span></div>
+            <div class="metric-bar-bg"><div class="metric-bar-fill" id="bar-s-eff" style="width:93%; background:var(--clr-sleep);"></div></div>
+          </div>
+          <div class="metric-row">
+            <div class="metric-info"><span class="metric-name">Restfulness</span></div>
+            <div class="metric-bar-bg"><div class="metric-bar-fill" id="bar-s-rest" style="width:85%; background:var(--clr-sleep);"></div></div>
+          </div>
+          <div class="metric-row">
+            <div class="metric-info"><span class="metric-name">REM Sleep</span><span class="metric-val" id="dur-rem">1h 15m</span></div>
+            <div class="metric-bar-bg"><div class="metric-bar-fill" id="bar-s-rem" style="width:28%; background:#c084fc;"></div></div>
+          </div>
+          <div class="metric-row">
+            <div class="metric-info"><span class="metric-name">Deep Sleep</span><span class="metric-val" id="dur-deep">1h 50m</span></div>
+            <div class="metric-bar-bg"><div class="metric-bar-fill" id="bar-s-deep" style="width:40%; background:#6366f1;"></div></div>
           </div>
         </div>
 
@@ -301,6 +311,36 @@
           <div class="goal-sub-row">
             <span id="goal-dist">4.8 km walked</span>
             <span id="goal-cal">240 kcal</span>
+          </div>
+        </div>
+
+        <!-- Activity Details -->
+        <div class="section-label">ACTIVITY DETAILS</div>
+        <div class="card metrics-list">
+          <div class="metric-row">
+            <div class="metric-info"><span class="metric-name">Active Calories</span><span class="metric-val" id="act-active-cal">240 kcal</span></div>
+          </div>
+          <div class="metric-row">
+            <div class="metric-info"><span class="metric-name">Total Calories</span><span class="metric-val" id="act-total-cal">2040 kcal</span></div>
+          </div>
+          <div class="metric-row">
+            <div class="metric-info"><span class="metric-name">Inactive Time</span><span class="metric-val" id="act-inactive">5h 40m</span></div>
+          </div>
+        </div>
+
+        <div class="section-label">MOVEMENT INTENSITY</div>
+        <div class="card metrics-list">
+          <div class="metric-row">
+            <div class="metric-info"><span class="metric-name">High</span><span class="metric-val" id="dur-int-high">5m</span></div>
+            <div class="metric-bar-bg"><div class="metric-bar-fill" id="bar-int-high" style="width:5%; background:#f43f5e;"></div></div>
+          </div>
+          <div class="metric-row">
+            <div class="metric-info"><span class="metric-name">Medium</span><span class="metric-val" id="dur-int-med">20m</span></div>
+            <div class="metric-bar-bg"><div class="metric-bar-fill" id="bar-int-med" style="width:20%; background:#fb923c;"></div></div>
+          </div>
+          <div class="metric-row">
+            <div class="metric-info"><span class="metric-name">Low</span><span class="metric-val" id="dur-int-low">45m</span></div>
+            <div class="metric-bar-bg"><div class="metric-bar-fill" id="bar-int-low" style="width:45%; background:#34d399;"></div></div>
           </div>
         </div>
 

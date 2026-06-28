@@ -13,14 +13,17 @@ const state = {
   simulator: true,
   battery: { level: 85, charging: false },
   realTime: { active: false, type: null, value: null },
+  readiness: { score: 85, hrv: 45, restingHrScore: 90, sleepBalance: 80, recoveryIndex: 85 },
   activity: {
-    steps: 6420, goal: 10000, calories: 240, distance: 4.8,
+    steps: 6420, goal: 10000, calories: 2040, activeCalories: 240, bmr: 1800, distance: 4.8,
+    inactiveTime: 340, intensity: { low: 45, med: 20, high: 5 },
     hourly: generateHourlySteps()
   },
   hr: { current: 72, min: 58, max: 124, avg: 71, timeline: [] },
   oxygen: { current: 98, min: 94, max: 99, timeline: [] },
   sleep: {
-    totalMin: 465, deep: 110, light: 260, rem: 75, awake: 20, score: 84
+    totalMin: 445, timeInBed: 480, efficiency: 93, latency: 15, restfulness: 85, tosses: 4,
+    deep: 110, light: 260, rem: 75, awake: 20, score: 84
   }
 };
 
@@ -246,11 +249,16 @@ function render() {
   const chgEl = document.getElementById('batt-charging');
   if (chgEl) chgEl.style.display = state.battery.charging ? 'inline' : 'none';
 
-  // Readiness score
+  // Readiness score and sub-metrics
   const restFactor  = Math.max(0, 100 - (state.hr.min - 50) * 2.2);
   const sleepFactor = Math.min(100, (state.sleep.totalMin / 480) * 100);
   const readiness   = Math.round(restFactor * 0.4 + sleepFactor * 0.4 + state.sleep.score * 0.2);
   const clampR      = Math.min(100, Math.max(30, readiness));
+  state.readiness.score = clampR;
+  state.readiness.restingHrScore = Math.min(100, Math.round(restFactor));
+  state.readiness.sleepBalance = Math.min(100, Math.round(sleepFactor));
+  state.readiness.recoveryIndex = Math.min(100, Math.round(restFactor * 0.8 + 20));
+  
   setText('readiness-score', clampR);
   setText('readiness-label', clampR >= 85 ? 'Optimal' : clampR >= 70 ? 'Good' : clampR >= 50 ? 'Fair' : 'Pay attention');
   setText('readiness-summary',
@@ -261,6 +269,11 @@ function render() {
       : 'Consider rest or light activity today. Your body needs more recovery time.'
   );
   setArc('readiness-arc', clampR);
+  
+  setText('val-r-hr', state.hr.min + ' bpm'); setBarWidth('bar-r-hr', state.readiness.restingHrScore);
+  setText('val-r-hrv', state.readiness.hrv + ' ms'); setBarWidth('bar-r-hrv', Math.min(100, state.readiness.hrv));
+  setText('val-r-sleep', state.readiness.sleepBalance); setBarWidth('bar-r-sleep', state.readiness.sleepBalance);
+  setText('val-r-rec', state.readiness.recoveryIndex); setBarWidth('bar-r-rec', state.readiness.recoveryIndex);
 
   // Pillars
   setText('p-sleep-score', state.sleep.score);
@@ -270,7 +283,7 @@ function render() {
 
   // Home chips
   setText('chip-steps', state.activity.steps.toLocaleString());
-  setText('chip-cal',   state.activity.calories);
+  setText('chip-cal',   state.activity.activeCalories);
   setText('chip-dist',  state.activity.distance);
   setText('chip-oxy',   `${state.oxygen.current}%`);
 
@@ -289,6 +302,19 @@ function render() {
   setText('dur-rem',   minutesToHM(state.sleep.rem));
   setText('dur-awake', `${state.sleep.awake}m`);
 
+  // Sleep details grid
+  setText('sleep-time-bed', minutesToHM(state.sleep.timeInBed));
+  setText('sleep-time-asleep', minutesToHM(state.sleep.totalMin));
+  setText('sleep-efficiency', `${state.sleep.efficiency}%`);
+  setText('sleep-latency', `${state.sleep.latency}m`);
+  setText('sleep-restfulness', `${state.sleep.restfulness}/100`);
+  
+  // Sleep contributors
+  setBarWidth('bar-s-eff', state.sleep.efficiency);
+  setBarWidth('bar-s-rest', state.sleep.restfulness);
+  setBarWidth('bar-s-rem', Math.min(100, (state.sleep.rem / 100) * 100));
+  setBarWidth('bar-s-deep', Math.min(100, (state.sleep.deep / 100) * 100));
+
   const oxyAvg = state.oxygen.timeline.filter(v => v > 0);
   setText('badge-oxy-avg', oxyAvg.length
     ? `${Math.round(oxyAvg.reduce((a,b)=>a+b,0)/oxyAvg.length)}% avg`
@@ -303,7 +329,22 @@ function render() {
   setText('badge-steps-goal', `${state.activity.steps.toLocaleString()} / ${state.activity.goal.toLocaleString()}`);
   setBarWidth('goal-fill', Math.min(100, (state.activity.steps / state.activity.goal) * 100), 'goal-fill');
   setText('goal-dist', `${state.activity.distance} km walked`);
-  setText('goal-cal',  `${state.activity.calories} kcal`);
+  setText('goal-cal',  `${state.activity.activeCalories} kcal active`);
+  
+  // Activity contributors
+  setText('act-active-cal', state.activity.activeCalories);
+  setText('act-total-cal', state.activity.calories);
+  setText('act-inactive', minutesToHM(state.activity.inactiveTime));
+  
+  // Activity Intensity
+  const totalInt = state.activity.intensity.low + state.activity.intensity.med + state.activity.intensity.high || 1;
+  setBarWidth('bar-int-high', (state.activity.intensity.high / totalInt) * 100);
+  setBarWidth('bar-int-med', (state.activity.intensity.med / totalInt) * 100);
+  setBarWidth('bar-int-low', (state.activity.intensity.low / totalInt) * 100);
+  setText('dur-int-high', minutesToHM(state.activity.intensity.high));
+  setText('dur-int-med', minutesToHM(state.activity.intensity.med));
+  setText('dur-int-low', minutesToHM(state.activity.intensity.low));
+
   setText('hr-min', state.hr.min);
   setText('hr-avg', state.hr.avg);
   setText('hr-max', state.hr.max);
@@ -527,11 +568,25 @@ function handleUartNotify(ev) {
     stepsAcc.push({ ti, cal, stp, dst });
     if (v[5] === v[6] - 1) {
       state.activity.steps    = stepsAcc.reduce((s,r) => s+r.stp, 0);
-      state.activity.calories = stepsAcc.reduce((s,r) => s+r.cal, 0);
+      state.activity.activeCalories = stepsAcc.reduce((s,r) => s+r.cal, 0);
       state.activity.distance = +(stepsAcc.reduce((s,r) => s+r.dst, 0) / 1000).toFixed(2);
+      
+      const hoursPassed = Math.max(1, new Date().getHours());
+      state.activity.bmr = 1800; // Estimated BMR
+      state.activity.calories = state.activity.activeCalories + Math.round(state.activity.bmr * (hoursPassed / 24));
+      
+      let low = 0, med = 0, high = 0;
       const hourly = Array.from({length:24}, (_,h) => ({ hour:`${h}`, steps:0 }));
-      stepsAcc.forEach(r => { hourly[Math.floor(r.ti/4)].steps += r.stp; });
+      stepsAcc.forEach(r => { 
+        hourly[Math.floor(r.ti/4)].steps += r.stp; 
+        if (r.stp > 600) high += 5;
+        else if (r.stp > 200) med += 5;
+        else if (r.stp > 0) low += 5;
+      });
       state.activity.hourly = hourly;
+      state.activity.intensity = { low, med, high };
+      state.activity.inactiveTime = Math.max(0, (hoursPassed * 60) - (low + med + high) - (state.sleep.timeInBed > 0 ? (state.sleep.timeInBed/3) : 0));
+      
       render(); buildCharts();
     }
   }
@@ -559,6 +614,13 @@ function handleUartNotify(ev) {
         state.hr.max = Math.max(...clean);
         state.hr.avg = Math.round(clean.reduce((a,b)=>a+b,0)/clean.length);
         state.hr.current = clean.at(-1);
+        
+        // HRV Simulation based on overnight heart rate variability proxy
+        let diffSum = 0;
+        for(let i=1; i<clean.length; i++) diffSum += Math.abs(clean[i] - clean[i-1]);
+        const avgDiff = (diffSum / (clean.length - 1)) || 0;
+        state.readiness.hrv = Math.min(120, Math.max(20, Math.round(25 + avgDiff * 6)));
+        
         render(); buildCharts();
       }
     }
@@ -594,9 +656,17 @@ function parseSleep(payload) {
     }
     state.sleep.deep = deep; state.sleep.light = light;
     state.sleep.rem  = rem;  state.sleep.awake = awake;
-    state.sleep.totalMin = deep+light+rem+awake;
+    
+    const timeAsleep = deep + light + rem;
+    state.sleep.totalMin = timeAsleep;
+    state.sleep.latency = 15;
+    state.sleep.timeInBed = timeAsleep + awake + state.sleep.latency;
+    state.sleep.efficiency = Math.round((timeAsleep / state.sleep.timeInBed) * 100);
+    state.sleep.tosses = Math.max(1, Math.floor(awake / 4) + 1);
+    state.sleep.restfulness = Math.max(30, 100 - (state.sleep.tosses * 4));
+    
     state.sleep.score = Math.min(100, Math.max(30,
-      Math.round((state.sleep.totalMin/480)*55 + (deep/(state.sleep.totalMin||1))*80)
+      Math.round((timeAsleep/480)*55 + (deep/(timeAsleep||1))*80)
     ));
     render(); buildCharts();
     idx += 2 + rb;

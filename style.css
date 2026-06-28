@@ -638,3 +638,69 @@ body::before {
   pointer-events: none;
   z-index: -1;
 }
+
+/* ─── DEEP METRICS UI ─── */
+.metrics-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+}
+.metric-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.metric-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.metric-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+.metric-val {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+.metric-bar-bg {
+  width: 100%;
+  height: 6px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.metric-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 16px;
+}
+.grid-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: rgba(255,255,255,0.03);
+  padding: 12px;
+  border-radius: 12px;
+}
+.g-lbl {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.g-val {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
