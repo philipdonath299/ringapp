@@ -58,12 +58,21 @@ body {
 }
 
 /* Full-screen on real phones */
-@media (max-width: 430px) {
+@media (max-width: 600px) {
   body { overflow: auto; }
   .device-shell {
     width: 100vw; height: 100dvh;
     border-radius: 0; border: none;
     box-shadow: none;
+  }
+  .device-notch, .status-bar, .home-indicator {
+    display: none !important;
+  }
+  .screens-host {
+    padding-top: env(safe-area-inset-top, 24px);
+  }
+  .tab-bar {
+    padding-bottom: max(env(safe-area-inset-bottom, 20px), 28px);
   }
 }
 
