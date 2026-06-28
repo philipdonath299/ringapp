@@ -7,6 +7,7 @@ import { buildCharts as readinessCharts, initEvents as readinessEvents, render a
 import { buildCharts as actCharts, initEvents as actEvents, render as actRender } from './modules/screens/activity.js';
 import { buildCharts as resCharts, initEvents as resEvents, render as resRender } from './modules/screens/resilience.js';
 import { buildCharts as coachCharts, initEvents as coachEvents, render as coachRender } from './modules/screens/coach.js';
+import { initEvents as settingsEvents, render as settingsRender } from './modules/screens/settings.js';
 import { destroyAll } from './modules/charts.js';
 
 // ─── BLE State ────────────────────────────────────────────────────────────────
@@ -25,6 +26,7 @@ const TAB_RENDERERS = {
   activity:   { render: actRender,     events: actEvents,     charts: actCharts },
   resilience: { render: resRender,     events: resEvents,     charts: resCharts },
   coach:      { render: coachRender,   events: coachEvents,   charts: coachCharts },
+  settings:   { render: settingsRender,events: settingsEvents,charts: () => {} },
 };
 
 function switchTab(tabId) {
@@ -446,14 +448,28 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 
   document.getElementById('btn-coach')?.addEventListener('click', () => switchTab('coach'));
+  document.getElementById('btn-settings')?.addEventListener('click', () => switchTab('settings'));
 
   // Theme toggle
-  document.getElementById('btn-theme')?.addEventListener('click', () => {
+  document.addEventListener('request-theme-toggle', () => {
     applyTheme(raw.theme === 'dark' ? 'light' : 'dark');
+    renderCurrentTab();
   });
 
-  // Sync button
-  document.getElementById('btn-sync')?.addEventListener('click', syncTelemetry);
+  // Sync request
+  document.addEventListener('request-sync', syncTelemetry);
+
+  // Simulator toggle
+  document.addEventListener('request-sim-toggle', () => {
+    raw.simulator = !raw.simulator;
+    log(`Simulator mode ${raw.simulator ? 'enabled' : 'disabled'}.`);
+    renderCurrentTab();
+  });
+
+  // BLE toggle from settings
+  document.addEventListener('request-ble-toggle', () => {
+    raw.connected ? disconnectDevice() : connectDevice();
+  });
 
   // Initial render
   renderCurrentTab();

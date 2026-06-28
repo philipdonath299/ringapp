@@ -19,18 +19,16 @@
 <!-- ── TOP BAR ── -->
 <header class="topbar">
   <div class="topbar-left">
-    <span id="topbar-clock" class="topbar-clock">12:00</span>
-    <span id="topbar-status-dot" class="status-dot dot-disconnected" title="Not connected"></span>
-    <span id="topbar-battery" class="topbar-battery"></span>
+    <button id="btn-settings" class="topbar-btn" style="font-size: 20px;" title="Menu">☰</button>
   </div>
   <div class="topbar-center">
     <span class="topbar-logo">AetherRing</span>
   </div>
   <div class="topbar-right">
-    <button id="btn-sync" class="topbar-btn" title="Sync data">↻</button>
-    <!-- AI Coach icon moved to top bar -->
-    <button class="topbar-btn" id="btn-coach" title="AI Coach">✨</button>
-    <button id="btn-theme" class="topbar-btn" title="Toggle theme"><span id="theme-icon">🌙</span></button>
+    <span id="topbar-status-dot" class="status-dot dot-disconnected" title="Not connected" style="display:none;"></span>
+    <span id="topbar-battery" class="topbar-battery"></span>
+    <button id="btn-connect" class="topbar-btn" title="Connect Ring" style="font-size: 18px;"><span id="ring-connect-icon">💍</span></button>
+    <button class="topbar-btn" id="btn-coach" title="AI Coach" style="font-size: 18px;">✨</button>
   </div>
 </header>
 
@@ -42,6 +40,7 @@
   <div class="screen-container" data-screen="activity" style="display:none"></div>
   <div class="screen-container" data-screen="resilience" style="display:none"></div>
   <div class="screen-container" data-screen="coach" style="display:none"></div>
+  <div class="screen-container" data-screen="settings" style="display:none"></div>
 </main>
 
 <!-- ── TAB BAR ── -->
