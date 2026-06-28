@@ -421,8 +421,8 @@ async function connectDevice() {
 
   try {
     bleDevice = await navigator.bluetooth.requestDevice({
-      filters: [{ services: [colmi.UART_SERVICE_UUID] }],
-      optionalServices: [colmi.DATA_SERVICE_UUID]
+      acceptAllDevices: true,
+      optionalServices: [colmi.UART_SERVICE_UUID, colmi.DATA_SERVICE_UUID]
     });
     log(`Found: ${bleDevice.name}. Connecting…`);
     bleDevice.addEventListener('gattserverdisconnected', onDisconnected);
