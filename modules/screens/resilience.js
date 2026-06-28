@@ -23,19 +23,19 @@ export function render(container) {
       </div>
 
       <!-- Score Crown -->
-      <div class="card" style="padding: 32px 24px; display: flex; flex-direction: column; align-items: center; gap: 16px;" id="spo2-score-card">
-        <div style="position: relative; width: 100%; max-width: 280px; height: 180px; display: flex; justify-content: center;">
-          <svg viewBox="0 0 200 140" style="width: 100%; height: 100%; overflow: visible;">
-            <path d="M 30,140 A 80,80 0 1,1 170,140" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="14" stroke-linecap="round"/>
-            <path d="M 30,140 A 80,80 0 1,1 170,140" fill="none" stroke="${PALETTE.spo2}" stroke-width="14" stroke-linecap="round"
-              stroke-dasharray="350" stroke-dashoffset="${350 - (350 * ((spo2 - 88) / 12))}" class="arc-animate"/>
+      <div class="large-crown-card clickable-card" id="spo2-score-card">
+        <div class="lc-wrap">
+          <svg class="lc-svg" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8"/>
+            <circle cx="50" cy="50" r="44" fill="none" stroke="${PALETTE.spo2}" stroke-width="8" stroke-linecap="round"
+              stroke-dasharray="198 276.4" stroke-dashoffset="${198 - (198 * ((spo2 - 88) / 12))}" class="arc-animate"/>
           </svg>
-          <div style="position: absolute; inset: 0; bottom: 20px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end;">
-            <span style="font-size: 64px; font-weight: 700; line-height: 1; letter-spacing: -2px;">${spo2}<span style="font-size:24px; letter-spacing:0">%</span></span>
-            <span style="font-size: 16px; font-weight: 600; color: ${PALETTE.spo2}; margin-top: 4px;">SpO₂</span>
+          <div class="lc-center">
+            <span class="lc-val">${spo2}<span style="font-size:24px; letter-spacing:0">%</span></span>
+            <span class="lc-lbl" style="color: ${PALETTE.spo2};">SpO₂</span>
           </div>
         </div>
-        <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.5; text-align: center; max-width: 300px;">${getSpO2Insight()}</p>
+        <p class="lc-msg">${getSpO2Insight()}</p>
       </div>
 
       <!-- Body Stats Grid -->

@@ -20,60 +20,66 @@ export function render(container) {
         <p class="hero-date">${new Date().toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' })}</p>
       </div>
 
-      <!-- Horizontal Crown Score Scroll -->
-      <div class="crown-row">
-        <!-- Readiness Crown -->
-        <div class="crown-card clickable-card" id="card-readiness-crown">
-          <div class="crown-wrap">
-            <svg class="crown-svg" viewBox="0 0 200 140">
-              <path d="M 30,140 A 80,80 0 1,1 170,140" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="14" stroke-linecap="round"/>
-              <path d="M 30,140 A 80,80 0 1,1 170,140" fill="none" stroke="${PALETTE.readiness}" stroke-width="14" stroke-linecap="round"
-                stroke-dasharray="350" stroke-dashoffset="${350 - (350 * r / 100)}" class="arc-animate"/>
+      <!-- Small Inline Crowns (No horizontal scroll) -->
+      <div class="today-crowns-container">
+        <!-- Readiness -->
+        <div class="today-crown-card clickable-card" id="card-readiness-crown">
+          <div class="tc-wrap">
+            <svg class="tc-svg" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8"/>
+              <circle cx="50" cy="50" r="40" fill="none" stroke="${PALETTE.readiness}" stroke-width="8" stroke-linecap="round"
+                stroke-dasharray="180 251.3" stroke-dashoffset="${180 - (180 * r / 100)}" class="arc-animate"/>
             </svg>
-            <div class="crown-center">
-              <span class="crown-val">${r}</span>
-              <span class="crown-lbl" style="color:${PALETTE.readiness}">Readiness</span>
+            <div class="tc-center">
+              <span class="tc-val">${r}</span>
             </div>
           </div>
-          <p class="crown-msg">${r >= 80 ? 'Optimal recovery. You are ready to take on the day.' : r >= 65 ? 'Good recovery. Keep an eye on your energy levels.' : 'Pay attention. Take it easy today.'}</p>
+          <span class="tc-lbl" style="color:${PALETTE.readiness}">Readiness</span>
         </div>
 
-        <!-- Sleep Crown -->
-        <div class="crown-card clickable-card" id="card-sleep-crown">
-          <div class="crown-wrap">
-            <svg class="crown-svg" viewBox="0 0 200 140">
-              <path d="M 30,140 A 80,80 0 1,1 170,140" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="14" stroke-linecap="round"/>
-              <path d="M 30,140 A 80,80 0 1,1 170,140" fill="none" stroke="${PALETTE.sleep}" stroke-width="14" stroke-linecap="round"
-                stroke-dasharray="350" stroke-dashoffset="${350 - (350 * slp / 100)}" class="arc-animate"/>
+        <!-- Sleep -->
+        <div class="today-crown-card clickable-card" id="card-sleep-crown">
+          <div class="tc-wrap">
+            <svg class="tc-svg" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8"/>
+              <circle cx="50" cy="50" r="40" fill="none" stroke="${PALETTE.sleep}" stroke-width="8" stroke-linecap="round"
+                stroke-dasharray="180 251.3" stroke-dashoffset="${180 - (180 * slp / 100)}" class="arc-animate"/>
             </svg>
-            <div class="crown-center">
-              <span class="crown-val">${slp}</span>
-              <span class="crown-lbl" style="color:${PALETTE.sleep}">Sleep</span>
+            <div class="tc-center">
+              <span class="tc-val">${slp}</span>
             </div>
           </div>
-          <p class="crown-msg">${slp >= 80 ? 'Excellent rest. Your sleep stages were perfectly balanced.' : slp >= 65 ? 'Fair sleep. Try to go to bed 15 mins earlier.' : 'Poor sleep. Prioritize rest tonight.'}</p>
+          <span class="tc-lbl" style="color:${PALETTE.sleep}">Sleep</span>
         </div>
 
-        <!-- Activity Crown -->
-        <div class="crown-card clickable-card" id="card-act-crown">
-          <div class="crown-wrap">
-            <svg class="crown-svg" viewBox="0 0 200 140">
-              <path d="M 30,140 A 80,80 0 1,1 170,140" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="14" stroke-linecap="round"/>
-              <path d="M 30,140 A 80,80 0 1,1 170,140" fill="none" stroke="${PALETTE.activity}" stroke-width="14" stroke-linecap="round"
-                stroke-dasharray="350" stroke-dashoffset="${350 - (350 * act / 100)}" class="arc-animate"/>
+        <!-- Activity -->
+        <div class="today-crown-card clickable-card" id="card-act-crown">
+          <div class="tc-wrap">
+            <svg class="tc-svg" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8"/>
+              <circle cx="50" cy="50" r="40" fill="none" stroke="${PALETTE.activity}" stroke-width="8" stroke-linecap="round"
+                stroke-dasharray="180 251.3" stroke-dashoffset="${180 - (180 * act / 100)}" class="arc-animate"/>
             </svg>
-            <div class="crown-center">
-              <span class="crown-val">${act}</span>
-              <span class="crown-lbl" style="color:${PALETTE.activity}">Activity</span>
+            <div class="tc-center">
+              <span class="tc-val">${act}</span>
             </div>
           </div>
-          <p class="crown-msg">${act >= 80 ? 'Great movement so far. Keep hitting those goals.' : act >= 65 ? 'Good activity. A short walk would help.' : 'Low activity. Time to get moving.'}</p>
+          <span class="tc-lbl" style="color:${PALETTE.activity}">Activity</span>
+        </div>
+      </div>
+
+      <!-- Main Daily Narrative -->
+      <div class="card" style="padding: 20px; display: flex; gap: 16px; align-items: center;" id="card-main-narrative">
+        <span style="font-size: 28px; line-height: 1;">${r >= 80 ? '🔋' : r >= 65 ? '⚡' : '🔋'}</span>
+        <div style="flex: 1;">
+          <p style="font-size: 15px; font-weight: 500; margin-bottom: 4px;">${r >= 80 ? 'Optimal recovery' : r >= 65 ? 'Good recovery' : 'Pay attention'}</p>
+          <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.4;">${getDailyCoachMessage().split('.')[0]}.</p>
         </div>
       </div>
 
       <!-- Anomaly Alerts -->
       ${anomalies.length ? `
-        <div class="alerts-list" style="padding:0 8px">
+        <div class="alerts-list">
           ${anomalies.map(a => `
             <div class="alert-card">
               <span class="alert-icon">${a.severity === 'high' ? '🔴' : '🟡'}</span>
@@ -126,7 +132,6 @@ export function render(container) {
       <div class="card pulse-card">
         <div class="pulse-header">
           <div>
-            <p class="card-label">Heart Rate</p>
             <div class="pulse-display">
               <span class="pulse-value" id="live-value">--</span>
               <span class="pulse-unit" id="live-unit">bpm</span>
@@ -137,7 +142,7 @@ export function render(container) {
             <svg id="pulse-wave-svg" class="pulse-wave-svg" viewBox="0 0 120 40" preserveAspectRatio="none">
               <path id="pulse-path"
                 d="M0,20 L10,20 L14,6 L18,34 L22,6 L26,20 L36,20 L40,12 L44,28 L48,12 L52,20 L62,20 L66,8 L70,32 L74,8 L78,20 L88,20 L92,14 L96,26 L100,14 L104,20 L120,20"
-                fill="none" stroke="#f43f5e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                fill="none" stroke="#FF4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </div>
         </div>
@@ -170,6 +175,7 @@ export function initEvents() {
   document.getElementById('card-readiness-crown')?.addEventListener('click', () => openDetail('readiness'));
   document.getElementById('card-sleep-crown')?.addEventListener('click', () => openDetail('sleep'));
   document.getElementById('card-act-crown')?.addEventListener('click', () => openDetail('activity'));
+  document.getElementById('card-main-narrative')?.addEventListener('click', () => openDetail('readiness'));
   document.getElementById('card-rhr-stat')?.addEventListener('click', () => openDetail('rhr'));
   document.getElementById('card-spo2-stat')?.addEventListener('click', () => openDetail('spo2'));
   document.getElementById('card-hrv-stat')?.addEventListener('click', () => openDetail('hrv'));
